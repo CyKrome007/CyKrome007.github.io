@@ -251,4 +251,43 @@
    */
   new PureCounter();
 
+  document.getElementById('contact-form').addEventListener('submit', async function(event) {
+    event.preventDefault(); // Prevent the default form submission
+    const form = event.target;
+    const data = new FormData(form);
+    const action = form.action;
+    const loadingElement = document.querySelector(".loading");
+    const successElement = document.querySelector(".sent-message");
+    const errorElement = document.querySelector('.error-message');
+
+    loadingElement.classList.add('d-block');
+    successElement.classList.remove('d-block');
+    errorElement.classList.remove('d-block');
+
+    try {
+      const response = await fetch(action, {
+        method: 'POST',
+        body: data,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        successElement.textContent = 'Thank you for your message!';
+        loadingElement.classList.remove('d-block');
+        successElement.classList.add('d-block');
+        errorElement.classList.remove('d-block');
+        form.reset(); // Optionally reset the form
+      } else {
+        throw new Error('Submission failed');
+      }
+    } catch (error) {
+      errorElement.textContent = 'Oops! There was a problem submitting your form.';
+      loadingElement.classList.remove('d-block');
+      successElement.classList.remove('d-block');
+      errorElement.classList.add('d-block');
+    }
+  });
+
 })()
